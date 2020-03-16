@@ -7,9 +7,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import mx.com.gauta.usedoc.ui.login.LoginActivity;
+
 public class user_active {
 
-    private static int user_id;
+    private static String user_id;
     private static String user_name;
     private static  String user_mail;
     private static int user_type;
@@ -18,11 +30,11 @@ public class user_active {
     private static String user_image;
     private static String user_data;
 
-    public static int getUser_id() {
+    public static String getUser_id() {
         return user_id;
     }
 
-    public static void setUser_id(int user_id) {
+    public static void setUser_id(String user_id) {
         user_active.user_id = user_id;
     }
 
@@ -94,10 +106,55 @@ public class user_active {
         values.put(FeedEntry.COLUMN_KEY, user_active.getUser_key());
         values.put(FeedEntry.COLUMN_REG, user_active.getUser_reg());
         values.put(FeedEntry.COLUMN_IMAGE, user_active.getUser_image());
-        values.put(FeedEntry.COLUMN_DATA, user_active.getUser_data());
+        values.put(FeedEntry.COLUMN_DATA, (user_active.getUser_data()!=null)?user_active.getUser_data():"No hay");
         long newRowId = db.insert(FeedEntry.TABLE_NAME, null, values);
+        System.out.println(newRowId);
         db.close();
 
+    }
+
+    public static void getUserServer(final Activity activity, final String token){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token",token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestQueue queue = Volley.newRequestQueue(activity);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, HttpManager.APIURL+"vuser", json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject user = response.getJSONObject("user");
+                            System.out.println(response.toString());
+                            if (user.getString("name")!= null){
+                                user_active.setUser_name(user.getString("name")+" "+user.getString("lastName"));
+                                user_active.setUser_id(user.getString("_id"));
+                                user_active.setUser_image(user.getString("imageRoute"));
+                                user_active.setUser_mail(user.getString("email"));
+                                user_active.setUser_key(token);
+                                user_active.setUser_type((user.getString("userType").equalsIgnoreCase("paciente"))?2:1);
+                                user_active.setUser_reg(user.getString("registerDate"));
+                                user_active.saveUser(activity);
+                                System.out.println(user_active.getUser_key());
+                            }else{
+                                Toast.makeText(activity,user.getString("message"),Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(activity,activity.getString(R.string.login_failed).toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(activity,activity.getString(R.string.login_failed).toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(jsonObjectRequest);
     }
 
     public static void logOff(Activity activity) {
@@ -118,7 +175,7 @@ public class user_active {
 
     public static class FeedEntry implements BaseColumns {
         public static final String TABLE_NAME = "user_app";
-        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_ID = "user_id";
         public static final String COLUMN_NAME= "user_name";
         public static final String COLUMN_MAIL ="user_mail";
         public static final String COLUMN_TYPE = "user_type";

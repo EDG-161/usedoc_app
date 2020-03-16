@@ -13,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -51,55 +52,47 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void login(final String username,final String password, final Activity activity) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email",username);
+            json.put("password",password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         RequestQueue queue = Volley.newRequestQueue(activity);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://verify.usedoc.ml/login",new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                String user_json_str =response;
-                System.out.println("Texto a JSON"+user_json_str);
-                try {
-                    JSONObject user = new JSONObject(""+user_json_str);
-                    if (user.getInt("id_usr")>0){
-                        Toast.makeText(activity,activity.getString(R.string.welcome) + user.getString("name_usr"),Toast.LENGTH_SHORT).show();
-                        user_active.setUser_id(user.getInt("id_usr"));
-                        user_active.setUser_name(user.getString("name_usr") + user.getString("appat_usr") + user.getString("apmat_usr"));
-                        user_active.setUser_key(user.getString("key_usr"));
-                        user_active.setUser_type(user.getInt("id_tid"));
-                        user_active.setUser_mail(user.getString("email_usr"));
-                        user_active.setUser_reg(user.getString("reg_usr"));
-                        user_active.setUser_image(user.getString("img_usr"));
-                        user_active.setUser_data(user.getString("dat_usr"));
-                        user_active.saveUser(activity);
-                        Intent intent = new Intent(activity, Home.class);
-                        activity.startActivity(intent);
-                        activity.finish();
-                    }else{
-                        Toast.makeText(activity,activity.getString(R.string.user_wrong).toString(),Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(activity, LoginActivity.class);
-                        activity.startActivity(intent);
-                        activity.finish();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(activity,activity.getString(R.string.login_failed).toString(),Toast.LENGTH_SHORT).show();
-                }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, HttpManager.APIURL+"signIn", json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject user = response;
+                            if (user.getString("token")!=null){
+                                Toast.makeText(activity,activity.getString(R.string.welcome),Toast.LENGTH_SHORT).show();
+                                user_active.getUserServer(activity,user.getString("token"));
 
-            }
-        }, new Response.ErrorListener() {
+                                Intent intent = new Intent(activity, Home.class);
+                                activity.startActivity(intent);
+                                activity.finish();
+                            }else{
+                                Toast.makeText(activity,activity.getString(R.string.user_wrong).toString(),Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(activity, LoginActivity.class);
+                                activity.startActivity(intent);
+                                activity.finish();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(activity,activity.getString(R.string.login_failed).toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 Toast.makeText(activity,activity.getString(R.string.login_failed).toString(),Toast.LENGTH_SHORT).show();
             }
-        }){
-            protected Map<String, String> getParams() {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("email", username);
+        });
 
-                params.put("pass", password);
-                return params;
-            }
-        };queue.add(stringRequest);
+        queue.add(jsonObjectRequest);
     }
 
     public void loginDataChanged(String username, String password) {

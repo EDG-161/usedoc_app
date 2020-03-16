@@ -12,12 +12,12 @@
     <string name="title_activity_home">Home</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_header_title">User Name</string>
+    <string name="nav_header_subtitle">email@email.com</string>
+    <string name="nav_header_desc">Navegación</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
+    <string name="menu_home">Inicio</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_tools">Tools</string>
@@ -25,4 +25,17 @@
     <string name="menu_send">Send</string>
     <string name="user_wrong">Usuario o contraseña incorrectos</string>
     <string name="log_Off">Cerrando sesion</string>
+    <string name="menu_citas">Citas</string>
+    <string name="menu_pacientes">Pacientes</string>
+    <string name="menu_add_pacientes">Agregar paciete</string>
+    <string name="menu_horario">Horario</string>
+    <string name="menu_chat">Mensajes</string>
+    <string name="menu_more">Configuracion</string>
+    <string name="menu_profile">Perfil</string>
+    <string name="menu_settings">Configuraciones</string>
+    <string name="add_paciente_str">Selecciona como agregar un paciente</string>
+    <string name="add_face_pac_str">Agregar rostro de paciente</string>
+    <string name="code_pac_str">Añadir codigo de paciente</string>
+    <string name="add_code_pac_str">Agregar por codigo</string>
+    <string name="log_Off_btn_str">Cerrar sesion</string>
 </resources>

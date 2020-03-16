@@ -12,32 +12,52 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="mx.com.gauta.usedoc.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_dates"
+        android:name="mx.com.gauta.usedoc.ui.citas.CitasFragment"
+        android:label="@string/menu_citas"
+        tools:layout="@layout/citas_fragment" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="mx.com.gauta.usedoc.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_pac"
+        android:name="mx.com.gauta.usedoc.ui.pacientes.PacientesFragment"
+        android:label="@string/menu_pacientes"
+        tools:layout="@layout/pacientes_fragment" />
 
     <fragment
-        android:id="@+id/nav_tools"
-        android:name="mx.com.gauta.usedoc.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
-        tools:layout="@layout/fragment_tools" />
+        android:id="@+id/nav_add_pac"
+        android:name="mx.com.gauta.usedoc.ui.addpaciente.AddPacienteFragment"
+        android:label="@string/menu_add_pacientes"
+        tools:layout="@layout/add_paciente_fragment" />
 
     <fragment
-        android:id="@+id/nav_share"
-        android:name="mx.com.gauta.usedoc.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
+        android:id="@+id/nav_times"
+        android:name="mx.com.gauta.usedoc.ui.horario.HorarioFragment"
+        android:label="@string/menu_horario"
+        tools:layout="@layout/horario_fragment" />
 
     <fragment
-        android:id="@+id/nav_send"
-        android:name="mx.com.gauta.usedoc.ui.send.SendFragment"
-        android:label="@string/menu_send"
-        tools:layout="@layout/fragment_send" />
+        android:id="@+id/nav_chat"
+        android:name="mx.com.gauta.usedoc.ui.chat.ChatFragment"
+        android:label="@string/menu_chat"
+        tools:layout="@layout/chat_fragment" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="mx.com.gauta.usedoc.ui.perfil.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/profile_fragment" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="mx.com.gauta.usedoc.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/settings_fragment" />
+
+    <fragment
+        android:id="@+id/action_settings"
+        android:name="mx.com.gauta.usedoc.ui.LogOff"
+        android:label="@string/log_Off_btn_str"
+        tools:layout="@layout/log_off_fragment"
+        />
+
 </navigation>

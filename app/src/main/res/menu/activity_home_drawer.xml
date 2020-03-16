@@ -9,29 +9,39 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_dates"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:title="@string/menu_citas" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_pac"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:title="@string/menu_pacientes" />
         <item
-            android:id="@+id/nav_tools"
+            android:id="@+id/nav_add_pac"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/menu_add_pacientes" />
+        <item
+            android:id="@+id/nav_times"
             android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:title="@string/menu_horario" />
+
+        <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/menu_chat" />
+
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/menu_more">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
+                android:title="@string/menu_profile" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
+                android:title="@string/menu_settings" />
         </menu>
     </item>
 

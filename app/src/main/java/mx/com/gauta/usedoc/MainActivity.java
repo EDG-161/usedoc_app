@@ -2,6 +2,7 @@ package mx.com.gauta.usedoc;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,8 +14,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,27 +34,19 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Intent intent;
 
+        setContentView(R.layout.activity_splash_screen);
         String name = "usedoc.db";
         db = this.openOrCreateDatabase(name,MODE_PRIVATE,null);
-        initDB();
-        if (user_active.getUser_id()>0){
-            intent = new Intent(this,Home.class);
-            startActivity(intent);
-            finish();
-        }else{
-            intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        initDB(this);
+
 
     }
 
-    private void initDB() {
+    private void initDB(final Activity activity) {
         String sqlCreate = "CREATE TABLE IF NOT EXISTS user_app(\n" +
                 "\t_id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                "\tuser_id TEXT,\n" +
                 "\tuser_name TEXT,\n" +
                 "\tuser_mail TEXT,\n" +
                 "\tuser_type INTEGER,\n" +
@@ -61,11 +58,10 @@ public class MainActivity extends AppCompatActivity  {
 
         db.execSQL(sqlCreate);
 
-        Cursor c = db.query("user_app",new String[]{"_id","user_name","user_mail","user_type","user_key","user_reg","user_img","user_dat"},"'1'='1'",null,null,null,null);
+        Cursor c = db.query("user_app",new String[]{"user_id","user_name","user_mail","user_type","user_key","user_reg","user_img","user_dat"},"'1'='1'",null,null,null,null);
 
-        if (c.moveToFirst()) {
-            System.out.println("hay uno");
-            user_active.setUser_id(c.getInt(0));
+        if (c.moveToNext()) {
+            user_active.setUser_id(c.getString(0));
             user_active.setUser_name(c.getString(1));
             user_active.setUser_mail(c.getString(2));
             user_active.setUser_type(c.getInt(3));
@@ -75,7 +71,7 @@ public class MainActivity extends AppCompatActivity  {
             user_active.setUser_data(c.getString(7));
             System.out.println(user_active.getUser_key());
         }else{
-            user_active.setUser_id(0);
+            user_active.setUser_id("error");
             user_active.setUser_name("");
             user_active.setUser_mail("");
             user_active.setUser_type(0);
@@ -83,30 +79,54 @@ public class MainActivity extends AppCompatActivity  {
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpManager.URL +"verify_session" ,new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (!response.equalsIgnoreCase("verify_session_ok")){
-                    user_active.setUser_id(0);
-                }else{
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("token",user_active.getUser_key());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, HttpManager.APIURL+"vuser", json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject user = response.getJSONObject("user");
+                            System.out.println(user.toString());
+                            if (user.getString("name")==null){
+                                System.out.println(user.getString("name"));
+                                user_active.setUser_id(null);
+                            }
+                            Intent intent;
+                            System.out.println(user_active.getUser_id());
+                            if (user.getString("name")!=null){
+                                intent = new Intent(activity,Home.class);
+                                user_active.getUserServer(activity,json.getString("token"));
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                intent = new Intent(activity,LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
 
-                }
-            }
-        }, new Response.ErrorListener() {
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            user_active.setUser_id(null);
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                user_active.setUser_id(0);
-                System.out.println("Error " + error.getMessage());
+                error.printStackTrace();Intent intent;
+
+                intent = new Intent(activity,Home.class);
+                startActivity(intent);
+                finish();
+                user_active.setUser_id(null);
             }
-        }){
-            protected Map<String, String> getParams() {
-                Map<String, String> MyData =  new HashMap<String, String>();
-                MyData.put("user_key",user_active.getUser_key());
-                return MyData;
-            }
-        };
-        queue.add(stringRequest);
+        });
+        queue.add(jsonObjectRequest);
+
     }
 
 

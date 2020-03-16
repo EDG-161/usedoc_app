@@ -23,8 +23,9 @@ import java.util.Map;
 
 public class HttpManager extends AppCompatActivity{
 
-     static final String URL = "https://verify.usedoc.ml/";
+     public static final String URL = "https://verify.usedoc.ml/";
     static  ArrayList<String> respond= new ArrayList<>();
+    public static final String APIURL = "https://api.usedoc.ml/";
 
     public static ArrayList<String> makeRequest(final Map params, final String route, Activity a){
 

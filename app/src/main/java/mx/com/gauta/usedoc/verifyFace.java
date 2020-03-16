@@ -1,6 +1,7 @@
 package mx.com.gauta.usedoc;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,9 +27,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,17 +69,22 @@ public class verifyFace extends AppCompatActivity implements View.OnClickListene
         btnBuscar.setOnClickListener(this);
         btnSubir.setOnClickListener(this);
     }
+    final Activity as = this;
+    Response.Listener<String> res = new Response.Listener<String>() {
+
+        @Override
+        public void onResponse(String response) {
+
+                editTextName.setText(response);
+
+        }
+    };
 
     private void uploadImage(final String img_base64){
-        RequestQueue queue = Volley.newRequestQueue(this);
-        final String name = "nombreUwU";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                System.out.println("Respuesta");
-                editTextName.setText("Response is: "+ response);
-            }
-        }, new Response.ErrorListener() {
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        final String name = "nombreUwU"+ new Date().getTime();
+        System.out.println(img_base64);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,res, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 editTextName.setText(error.getMessage());

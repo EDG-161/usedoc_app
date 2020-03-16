@@ -18,6 +18,6 @@ public class StartWindow extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        },2000);
+        },1500);
     }
 }
